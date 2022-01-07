@@ -13,35 +13,35 @@ export const theme = createTheme({
   },
   typography: {
     body1: {
-      fontFamily: 'Montserrat',
+      fontFamily: 'Space Grotesk',
     },
     button: {
-      fontFamily: 'Montserrat',
+      fontFamily: 'Space Grotesk',
       fontWeight: 800,
       textTransform: 'none',
     },
     h1: {
-      fontFamily: 'Montserrat',
+      fontFamily: 'Space Grotesk',
     },
     h2: {
-      fontFamily: 'Montserrat',
+      fontFamily: 'Space Grotesk',
       color: darkBlue,
       fontWeight: 800,
     },
     h3: {
-      fontFamily: 'Montserrat',
+      fontFamily: 'Space Grotesk',
     },
     h4: {
-      fontFamily: 'Montserrat',
+      fontFamily: 'Space Grotesk',
     },
     h5: {
-      fontFamily: 'Montserrat',
+      fontFamily: 'Space Grotesk',
     },
     h6: {
-      fontFamily: 'Montserrat',
+      fontFamily: 'Space Grotesk',
     },
     body2: {
-      fontFamily: 'Montserrat',
+      fontFamily: 'Space Grotesk',
     },
   },
   overrides: {
