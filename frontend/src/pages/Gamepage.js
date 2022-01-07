@@ -1,10 +1,19 @@
 import React, {useState, useEffect} from 'react';
 import Chart from "react-apexcharts";
+import stocksJson from "../sample.json"
 
 const Gamepage = () => {
-  var TICKINTERVAL = 86400000
   let XAXISRANGE = 766600000
 
+  let stocks = []
+  let mn = Number.MAX_VALUE, mx = Number.MIN_VALUE;
+  for(const [key, value] of Object.entries(stocksJson["DAILY_PRICE"])) {
+    stocks.push([new Date(key), value])
+    mn = Math.min(mn, value);
+    mx = Math.max(mx, value)
+  }
+
+  stocks.reverse()
   let options = {
     chart: {
     id: 'realtime',
@@ -31,7 +40,7 @@ const Gamepage = () => {
     curve: 'smooth'
   },
   title: {
-    text: 'Dynamic Updating Chart',
+    text: stocksJson["STOCK_NAME"],
     align: 'left'
   },
   markers: {
@@ -42,26 +51,29 @@ const Gamepage = () => {
     range: XAXISRANGE
   },
   yaxis: {
-    max: 100
+    max: mx,
+    min: mn
   },
   legend: {
     show: false
   },
   }
-  let lastDate = new Date('11 Feb 2021 GMT').getTime()
+
+  const gameOver = () =>{ };
+  let idx = 0;
 
   const [series, setSeries] = useState([{data:[]}])
   let fullData = []
 
   useEffect(() => {
     const getNewSeries = () => {
-      console.log("series", series)
-      fullData.push({x: lastDate, y: Math.floor(Math.random() * 100)})
-      lastDate += TICKINTERVAL
+      const [nx, ny] = stocks[idx]
+      fullData.push({x: nx, y: ny})
+      idx+=1
       return [{data: fullData.slice()}]
     }
     const interval = setInterval(() => 
-      setSeries(getNewSeries()), 500);
+      (idx < stocks.length? setSeries(getNewSeries()) : gameOver()), 500);
     return () => {
       clearInterval(interval);
     };
