@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Button, Grid } from '@mui/material';
+import { Grid } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import HelpModal from '../components/HelpModal';
 import { StyledLink, StyledButton } from '../components/StyledComponents';

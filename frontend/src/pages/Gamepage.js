@@ -1,6 +1,6 @@
 import React, {useState, useEffect, useRef} from 'react';
 import Chart from "react-apexcharts";
-import stocksJson from "../sample.json"
+import allStocks from "../data.json";
 import { Typography } from '@mui/material';
 import { StyledButton } from '../components/StyledComponents';
 import EndgameModal from '../components/EndgameModal';
@@ -20,7 +20,11 @@ const Space = styled('div')({
   flexGrow: 1,
 });
 
-const parseStocks = () => {
+const retrieveRandomStock = () => {
+  return allStocks[Math.floor(Math.random() * allStocks.length)];
+};
+
+const parseStocks = (stocksJson) => {
   let stocks = [];
   let mn = Number.MAX_VALUE, mx = Number.MIN_VALUE;
   for(const [key, value] of Object.entries(stocksJson["DAILY_PRICE"])) {
@@ -30,10 +34,10 @@ const parseStocks = () => {
   }
   stocks.reverse();
 
-  return { stocks, mn, mx };
+  return { stocks: stocks, mn: mn, mx: mx };
 };
 
-const generateOptions = (mn, mx) => {
+const generateOptions = (stocksJson, mn, mx) => {
   return {
     chart: {
       id: 'realtime',
@@ -81,18 +85,18 @@ const generateOptions = (mn, mx) => {
 };
 
 const Gamepage = () => {
-  const { stocks, mn, mx } = parseStocks();
-  const options = generateOptions(mn, mx); 
+  const [stocksJson] = useState(retrieveRandomStock());
   const [cash, setCash] = useState(STARTING_MONEY);
+  const [isBuying, setIsBuying] = useState(true);
+  const [series, setSeries] = useState([{ data:[] }]);
+  const [price, setPrice] = useState(0);
+  const [buy, setBuy] = useState(0);
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const ref = useRef({
     index: 0,
-    fullData: []
+    fullData: [],
+    ...parseStocks(stocksJson)
   });
-  const [isBuying, setIsBuying] = useState(true)
-  const [series, setSeries] = useState([{data:[]}])  
-  const [price, setPrice] = useState(0)
-  const [buy, setBuy] = useState(0)
-  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const handleGameOver = () =>{
     if (!isBuying) {
@@ -103,7 +107,7 @@ const Gamepage = () => {
 
   useEffect(() => {
     const getNewSeries = () => {
-      const [nx, ny] = stocks[ref.current.index];
+      const [nx, ny] = ref.current.stocks[ref.current.index];
       ref.current.fullData.push({ x: nx, y: ny });
       ref.current.index += 1;
       setPrice(ny);
@@ -111,7 +115,7 @@ const Gamepage = () => {
     }
 
     const interval = setInterval(() => 
-      (ref.current.index < stocks.length? setSeries(getNewSeries()) : handleGameOver()), 500);
+      (ref.current.index < ref.current.stocks.length? setSeries(getNewSeries()) : handleGameOver()), 500);
 
     return () => {
       clearInterval(interval);
@@ -142,7 +146,7 @@ const Gamepage = () => {
         </StyledButton>
       </Wrapper>
       <Chart
-        options={options}
+        options={generateOptions(stocksJson, ref.current.mn, ref.current.mx)}
         series={series}
         type="line"
         height="800px"
