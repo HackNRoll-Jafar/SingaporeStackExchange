@@ -39,6 +39,7 @@ export const theme = createTheme({
     },
     h6: {
       fontFamily: 'Space Grotesk',
+      fontWeight: 400,
     },
     body2: {
       fontFamily: 'Space Grotesk',
