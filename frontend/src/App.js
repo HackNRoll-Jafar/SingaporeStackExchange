@@ -1,25 +1,22 @@
 import React from 'react';
-import { Route } from 'react-router-dom';
+import { Route, Routes } from 'react-router-dom';
 import Homepage from './pages/Homepage';
 import Gamepage from './pages/Gamepage';
 
 const Pages = () => {
   return (
-    <>
-      <Route exact path="/">
-        <Homepage />
-      </Route>
-      <Route exact path="/game">
-        <Gamepage />
-      </Route>
-    </>
-  )
+    <Routes>
+      <Route exact path="/" element={<Homepage />} />
+      <Route exact path="/game" element={<Gamepage />} />
+    </Routes>
+  );
 };
 
 const App = () => {
   return (
     <>
       <h1>Singapore Stack Exchange</h1>
+      <Pages />
     </>
   );
 };
