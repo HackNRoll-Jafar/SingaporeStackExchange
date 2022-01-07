@@ -1,16 +1,7 @@
 import React from 'react';
-import { Button, Modal, Paper, Typography } from '@mui/material';
+import { Button, Modal, Typography } from '@mui/material';
 import { styled } from '@mui/material/styles';
-import { StyledLink } from './StyledComponents';
-
-const StyledPaper = styled(Paper)(() => ({
-  position: 'absolute',
-  top: '50%',
-  left: '50%',
-  transform: 'translate(-50%, -50%)',
-  width: '30%',
-  padding: '1rem',
-}));
+import { StyledLink, StyledPaper } from './StyledComponents';
 
 const Wrapper = styled('div')({
   display: 'flex',
