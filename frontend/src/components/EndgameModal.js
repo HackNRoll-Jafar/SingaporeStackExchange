@@ -23,7 +23,7 @@ const EndgameModal = (props) => {
           <Typography variant = "h6">
             You have gained {profit}% profits over the course of this game using {company} stocks
           </Typography>
-          <StyledLink to="/game">
+          <StyledLink to="/game" onClick={() => window.location.reload()}>
             <Button variant="contained">
               Play Again
             </Button>
