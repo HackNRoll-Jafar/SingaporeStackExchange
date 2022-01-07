@@ -94,7 +94,7 @@ const Gamepage = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const handleGameOver = () =>{
-    if (isBuying) {
+    if (!isBuying) {
       setCash((cash * price / buy).toFixed());
     }
     setIsModalOpen(true);
