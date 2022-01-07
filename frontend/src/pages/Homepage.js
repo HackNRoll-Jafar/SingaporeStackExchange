@@ -2,18 +2,11 @@ import React, { useState } from 'react';
 import { Button, Grid } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import HelpModal from '../components/HelpModal';
-import { StyledLink } from '../components/StyledComponents';
+import { StyledLink, StyledButton } from '../components/StyledComponents';
 
 const StyledGrid = styled(Grid)(() => ({
   minHeight: 'calc(100vh - 100px)',
-}));
-
-const StyledButton = styled(Button)(({ theme }) => ({
-  borderColor: '#000000',
-  textColor: '#000000',
-  backgroundColor: theme.palette.secondary.primary,
-  width: '8%',
-  margin: '0.2%'
+  gap: '1rem'
 }));
 
 const Homepage = () => {
@@ -35,11 +28,11 @@ const Homepage = () => {
       alignItems="center"
       justifyContent="center"
     >
-      <StyledButton variant="contained"> 
-        <StyledLink to="/game">
-            Play
-        </StyledLink>
-      </StyledButton>
+      <StyledLink to="/game">
+        <StyledButton variant="contained"> 
+          Play
+        </StyledButton>
+      </StyledLink>
       <StyledButton variant="contained" onClick={handleOpen}> 
         Help
       </StyledButton>

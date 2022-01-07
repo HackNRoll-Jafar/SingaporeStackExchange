@@ -7,6 +7,7 @@ import EndgameModal from '../components/EndgameModal';
 import { styled } from '@mui/material/styles';
 
 const XAXISRANGE = 766600000;
+const STARTING_MONEY = 1000;
 
 const Wrapper = styled('div')({
   display: 'flex',
@@ -82,7 +83,7 @@ const generateOptions = (mn, mx) => {
 const Gamepage = () => {
   const { stocks, mn, mx } = parseStocks();
   const options = generateOptions(mn, mx); 
-  const [cash, setCash] = useState(1000);
+  const [cash, setCash] = useState(STARTING_MONEY);
   const ref = useRef({
     index: 0,
     fullData: []
@@ -128,14 +129,14 @@ const Gamepage = () => {
 
   return (
     <>
-      <EndgameModal isOpen={isModalOpen} profit={cash} company={stocksJson["STOCK_NAME"]} />
+      <EndgameModal isOpen={isModalOpen} profit={((cash - STARTING_MONEY) / STARTING_MONEY * 100).toFixed(2)} company={stocksJson["STOCK_NAME"]} />
       <Wrapper>
         <Typography variant="h4">
           Current Money: {cash} SGD
         </Typography>
         <Space />
         <StyledButton variant="contained" onClick={makeTransaction}> 
-          <Typography variant="h4">
+          <Typography variant="h6">
             {isBuying ? "BUY" : "SELL"}
           </Typography>
         </StyledButton>
