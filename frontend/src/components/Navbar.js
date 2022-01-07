@@ -1,7 +1,7 @@
 import React from 'react';
 import { AppBar, Toolbar, Typography } from '@mui/material';
 import { styled } from '@mui/material/styles';
-import { Link } from 'react-router-dom';
+import { StyledAnchor, StyledLink } from './StyledComponents';
 
 const Wrapper = styled('div')({
   display: 'flex',
@@ -13,17 +13,16 @@ const Space = styled('div')({
   flexGrow: 1,
 });
 
-const StyledAnchor = styled('a')({
-  color: 'inherit',
-  textDecoration: 'none',
-});
-
 const Navbar = () => {
   return (
     <AppBar elevation={2}>
       <Toolbar>
         <Wrapper>
-          <Typography variant="h4">Singapore Stack Exchange</Typography>
+          <Typography variant="h4">
+            <StyledLink to="/">
+              Singapore Stack Exchange
+            </StyledLink>
+          </Typography>
           <Space />
           <Typography variant="h6">
             <StyledAnchor href="https://github.com/HackNRoll-Jafar/SingaporeStackExchange" target="_blank" rel="noreferrer">

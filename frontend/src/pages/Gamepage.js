@@ -1,34 +1,39 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState, useEffect, useRef} from 'react';
 import Chart from "react-apexcharts";
 import stocksJson from "../sample.json"
-import { Button, Grid, IconButton, Modal, Paper, Typography } from '@mui/material';
+import { Typography } from '@mui/material';
+import { StyledButton } from '../components/StyledComponents';
+import EndgameModal from '../components/EndgameModal';
 import { styled } from '@mui/material/styles';
 
-function sleep(ms) {
-  return new Promise(resolve => setTimeout(resolve, ms));
-}
+const XAXISRANGE = 766600000;
 
+const Wrapper = styled('div')({
+  display: 'flex',
+  flexDirection: 'row',
+  alignItems: 'center',
+  padding: '24px',
+});
 
-const Gamepage = () => {
-  let XAXISRANGE = 766600000
+const Space = styled('div')({
+  flexGrow: 1,
+});
 
-  let stocks = []
+const parseStocks = () => {
+  let stocks = [];
   let mn = Number.MAX_VALUE, mx = Number.MIN_VALUE;
   for(const [key, value] of Object.entries(stocksJson["DAILY_PRICE"])) {
     stocks.push([new Date(key), value])
     mn = Math.min(mn, value);
     mx = Math.max(mx, value)
   }
-  const StyledButton = styled(Button)(({ theme }) => ({
-    borderColor: '#000000',
-    textColor: '#000000',
-    backgroundColor: theme.palette.secondary.primary,
-    width: '8%',
-    margin: '0.2%'
-  }));
+  stocks.reverse();
 
-  stocks.reverse()
-  let options = {
+  return { stocks, mn, mx };
+};
+
+const generateOptions = (mn, mx) => {
+  return {
     chart: {
       id: 'realtime',
       height: 350,
@@ -71,80 +76,78 @@ const Gamepage = () => {
     legend: {
       show: false
     },
-  }
-  const [cash, setCash] = useState(1000)
-  const gameOver = () =>{
-      if (state) {
-        getNewCash((cash*price/buy).toFixed()) // Sell unsold stocks by the end of the round
-      }
-      // then, trigger game over state
   };
+};
 
-  let idx = 0;
-  const [state, setState] = useState(true)
+const Gamepage = () => {
+  const { stocks, mn, mx } = parseStocks();
+  const options = generateOptions(mn, mx); 
+  const [cash, setCash] = useState(1000);
+  const ref = useRef({
+    index: 0,
+    fullData: []
+  });
+  const [isBuying, setIsBuying] = useState(true)
   const [series, setSeries] = useState([{data:[]}])  
   const [price, setPrice] = useState(0)
   const [buy, setBuy] = useState(0)
-  const [clicks, setClicks] = useState(0)
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
-  let fullData = []
+  const handleGameOver = () =>{
+    if (isBuying) {
+      setCash((cash * price / buy).toFixed());
+    }
+    setIsModalOpen(true);
+  };
 
   useEffect(() => {
-    const getNewPrice = (price) => { setPrice(price) };
     const getNewSeries = () => {
-      const [nx, ny] = stocks[idx]
-      fullData.push({x: nx, y: ny})
-      idx+=1
-      getNewPrice(ny);
-      return [{data: fullData.slice()}]
+      const [nx, ny] = stocks[ref.current.index];
+      ref.current.fullData.push({ x: nx, y: ny });
+      ref.current.index += 1;
+      setPrice(ny);
+      return [{ data: ref.current.fullData.slice() }]
     }
 
     const interval = setInterval(() => 
-      (idx < stocks.length? setSeries(getNewSeries()) : gameOver()), 500);
+      (ref.current.index < stocks.length? setSeries(getNewSeries()) : handleGameOver()), 500);
+
     return () => {
       clearInterval(interval);
     };
   }, []);
 
-  const getNewCash = (cash) => {setCash(cash)};
   const makeTransaction = () => {
-    setClicks(clicks+1)
-    if(state){
+    if (isBuying) {
       setBuy(price);
+    } else{
+      setCash((cash * price / buy).toFixed());
     }
-    else{
-      getNewCash((cash*price/buy).toFixed())
-  
-    }
-    setState(!state)
-  }
+    setIsBuying(!isBuying);
+  };
+
   return (
-    <div className="app">
-    <div className="row">
-    <div> <h1> Current Money : {cash} SGD </h1>  </div>
-    <div align = "right">
-    <StyledButton variant="outlined" onClick = {makeTransaction}> 
-    <Typography variant="h3">
-    {state ? "BUY" : "SELL"}
-    </Typography>
-    </StyledButton>
-    </div>
-    </div>
-    <div className="row">    
-    <div className="realtime">
-    <Chart
-    options={options}
-    series={series}
-    type="line"
-    height="800px"
-    />
-    <Button variant="primary" className="btn-primary"/>
-    </div>
-
-    </div>
-    </div>
-
-    )
+    <>
+      <EndgameModal isOpen={isModalOpen} profit={cash} company={stocksJson["STOCK_NAME"]} />
+      <Wrapper>
+        <Typography variant="h4">
+          Current Money: {cash} SGD
+        </Typography>
+        <Space />
+        <StyledButton variant="contained" onClick={makeTransaction}> 
+          <Typography variant="h4">
+            {isBuying ? "BUY" : "SELL"}
+          </Typography>
+        </StyledButton>
+      </Wrapper>
+      <Chart
+        options={options}
+        series={series}
+        type="line"
+        height="800px"
+      />
+    </>
+  );
 };
 
 export default Gamepage;
